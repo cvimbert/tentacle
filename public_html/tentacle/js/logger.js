@@ -8,7 +8,7 @@ Tentacle.LoggerLevels = {
 
 Tentacle.Logger = new function() {
     
-    this.log = function (msg, args, level) {
+    this.sendLog = function (msg, args, level) {
         
         if (!level) {
             level = Tentacle.LoggerLevels.WARNING;
@@ -29,7 +29,7 @@ Tentacle.Logger = new function() {
             
         } else {
             
-            console.log(Tentacle.Exceptions.bagloggerargs);
+            console.log(Tentacle.Exceptions.badloggerargs);
             return;
             
         }
@@ -48,4 +48,21 @@ Tentacle.Logger = new function() {
                 break;
         }
     };
+    
+    this.log = function (msg, args) {
+        Tentacle.Logger.sendLog(msg, args, Tentacle.LoggerLevels.LOG);
+    };
+    
+    this.warn = function (msg, args) {
+        Tentacle.Logger.sendLog(msg, args, Tentacle.LoggerLevels.WARNING);
+    };
+    
+    this.error = function (msg, args) {
+        Tentacle.Logger.sendLog(msg, args, Tentacle.LoggerLevels.ERROR);
+    };
+    
+    // aliases
+    Tentacle.log = this.log;
+    Tentacle.warn = this.warn;
+    Tentacle.error = this.error;
 }();

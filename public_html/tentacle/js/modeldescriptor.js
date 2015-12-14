@@ -1,6 +1,6 @@
-/* global Tentacle, _ */
+/* global Tentacle, _, uuid */
 
-Tentacle.ModelDescriptor = function () {
+Tentacle.ModelDescriptor = function (modelManager) {
 
     var self = this;
     var descriptorsByClasses = {};
@@ -9,7 +9,7 @@ Tentacle.ModelDescriptor = function () {
     this.load = function (jsonDescriptor) {
 
         _.each(jsonDescriptor, function (jsonClassDescriptor, classId) {
-            var descriptor = new Tentacle.ClassModelDescriptor(jsonClassDescriptor, self);
+            var descriptor = new Tentacle.ClassModelDescriptor(classId, jsonClassDescriptor, self, modelManager);
             descriptorsByClasses[classId] = descriptor;
         });
 
@@ -28,45 +28,137 @@ Tentacle.ModelDescriptor = function () {
 };
 
 
-Tentacle.ClassModelDescriptor = function (jsonClassDescriptor, modelDescriptor) {
+Tentacle.ClassModelDescriptor = function (classId, jsonClassDescriptor, modelDescriptor, modelManager) {
     
     var self = this;
     
-    this.flattenByItem = function (item) {
-        var destDesc = {};
-        self.flattenByDescItem(item, objectDescriptor, destDesc, 0);
-        return destDesc;
+    
+    this.getRaw = function () {
+        return jsonClassDescriptor;
     };
 
+    this.getAttributes = function () {
+        return jsonClassDescriptor.attributes;
+    };
+
+    this.getAttribute = function (id) {
+        return getAttributes()[id];
+    };
+
+    this.getClone = function () {
+        var serializedDescriptor = JSON.stringify(jsonClassDescriptor);
+        return JSON.parse(serializedDescriptor);
+    };
+    
+    
+    this.getObjectBySource = function (sourceObject) {
+        var destObject = {};
+
+        if (sourceObject && sourceObject.uid) {
+            destObject.uid = sourceObject.uid;
+        }
+
+        if (sourceObject && sourceObject.type) {
+            destObject.type = sourceObject.type;
+        }
+
+        var fdesc = self.flattenByItem(sourceObject);
+        self.getObject(fdesc, sourceObject, destObject);
+
+        if (!destObject.uid) {
+            destObject.uid = uuid.v4();
+        }
+
+        if (!destObject.type) {
+            destObject.type = classId;
+        }
+
+        return destObject;
+    };
+    
+    this.getObject = function (descriptorAttributes, sourceObject, destObject) {
+        _.each(descriptorAttributes, function (attribute, attributeId) {
+            if (!sourceObject || !sourceObject[attributeId]) {
+                switch (attribute.type) {
+                    
+                    case Tentacle.BaseObjectTypes.STRING:
+                        destObject[attributeId] = "";
+                        break;
+
+                    case Tentacle.BaseObjectTypes.NUMBER:
+                        if (attribute.defaultvalue) {
+                            destObject[attributeId] = attribute.defaultvalue;
+                        } else {
+                            destObject[attributeId] = 0;
+                        }
+                        break;
+
+                    case Tentacle.BaseObjectTypes.BOOLEAN:
+                        if (attribute.defaultvalue) {
+                            destObject[attributeId] = attribute.defaultvalue;
+                        } else {
+                            destObject[attributeId] = "false";
+                        }
+                        break;
+
+                    case Tentacle.ModelDecriptorTypes.CONDITIONAL_ATTRIBUTES_SET:
+                        destObject[attributeId] = "";
+                        break;
+
+                    case Tentacle.ModelDecriptorTypes.COLLECTION:
+                        destObject[attributeId] = [];
+                        break;
+
+                    default:
+                        destObject[attributeId] = "";
+                }
+            } else {
+                if (attribute.type === Tentacle.ModelDecriptorTypes.CONDITIONAL_ATTRIBUTES_SET) {
+                    destObject[attributeId] = sourceObject[attributeId];
+                    self.getObject(attribute.attributesSets[sourceObject[attributeId]], sourceObject, destObject);
+                } else {
+                    destObject[attributeId] = sourceObject[attributeId];
+                }
+            }
+        });
+    };
+    
+    
+    // descriptor flatten functions
+    
+    this.flattenByItem = function (item) {
+        var destDesc = {};
+        self.flattenByDescItem(item, jsonClassDescriptor, destDesc, 0);
+        return destDesc;
+    };
 
     this.flattenByDescItem = function (item, desc, destDesc, indentation) {
         flattenByItemAction(item, desc.attributes, destDesc, indentation);
     };
 
-
     this.flattenAttribute = function (item, attribute, attributeId, destDesc, indentation) {
 
-        if (attribute.type !== "LinkedConditionalAttributesSet" && attribute.type !== "include") {
+        if (attribute.type !== Tentacle.ModelDecriptorTypes.LINKED_CONDITIONAL_ATTRIBUTES_SET && attribute.type !== Tentacle.ModelDecriptorTypes.INCLUDE) {
             destDesc[attributeId] = attribute;
             destDesc[attributeId].indentation = indentation;
         }
 
 
-        if (attribute.type === "ConditionalAttributesSet") {
+        if (attribute.type === Tentacle.ModelDecriptorTypes.CONDITIONAL_ATTRIBUTES_SET) {
 
             if (item && item[attributeId]) {
                 var selectedBranch = attribute.attributesSets[item[attributeId]];
                 flattenByItemAction(item, selectedBranch, destDesc, indentation + 1);
             }
 
-        } else if (attribute.type === "include") {
+        } else if (attribute.type === Tentacle.ModelDecriptorTypes.INCLUDE) {
 
-            var targetDescriptor = modDescriptor.getUnitDescriptor(attribute.includetype).getRaw();
+            var targetDescriptor = modelDescriptor.getClassDescriptor(attribute.includetype).getRaw();
             self.flattenAttribute(item, targetDescriptor, attributeId, destDesc, indentation);
 
-        } else if (attribute.type === "LinkedConditionalAttributesSet") {
+        } else if (attribute.type === Tentacle.ModelDecriptorTypes.LINKED_CONDITIONAL_ATTRIBUTES_SET) {
 
-            if (attribute.linktype === "referenceattributevalue") {
+            if (attribute.linktype === Tentacle.ModelDecriptorTypes.REFERENCE_ATTRIBUTE_VALUE) {
                 var refItemId = item[attribute.linkedreference];
 
                 if (refItemId) {
@@ -96,7 +188,6 @@ Tentacle.ClassModelDescriptor = function (jsonClassDescriptor, modelDescriptor) 
 
         }
     };
-
 
     function flattenByItemAction(item, attributes, destDesc, indentation) {
 

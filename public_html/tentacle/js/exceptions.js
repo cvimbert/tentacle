@@ -2,5 +2,6 @@
 
 Tentacle.Exceptions = {
     cantfinddescriptor: "Can't find ClassDescriptor $$ in descriptors",
-    bagloggerargs: "Bad logger arguments"
+    badloggerargs: "Bad logger arguments",
+    verywell: "Everything is fine !"
 };
