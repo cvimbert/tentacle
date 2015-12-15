@@ -9,31 +9,9 @@ module.exports = function (grunt) {
     var buildPath = "public_html/tentacle/build/";
     grunt.initConfig({
         uglify: {
-            tentacle_first_no_mangle: {
-                options: {
-                    mangle: false,
-                    compress: false,
-                    beautify: true
-                },
-                files: {
-                    'public_html/tentacle/build/temp.js': [srcPath + '*.js']
-                }
-            },
-            tentacle_second_no_mangle: {
-                options: {
-                    mangle: false,
-                    sourceMap: true,
-                    compress: false,
-                    beautify: true,
-                    sourceMapName: buildPath + 'tentacle.map'
-                },
-                files: {
-                    'public_html/tentacle/build/tentacle.js': [srcPath + "tentacle.js", buildPath + 'temp.min.js']
-                }
-            },
             tentacle_first: {
                 files: {
-                    'public_html/tentacle/build/temp.min.js': [srcPath + '*.js']
+                    'public_html/tentacle/build/temp.min.js': [srcPath + 'modelmanager/*.js']
                 }
             },
             tentacle_second: {
@@ -60,5 +38,5 @@ module.exports = function (grunt) {
     });
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.registerTask('min', ['uglify:tentacle_first_no_mangle', "uglify:tentacle_second_no_mangle", 'uglify:tentacle_first', "uglify:tentacle_second"]);
+    grunt.registerTask('min', ['uglify:tentacle_first', "uglify:tentacle_second"]);
 };

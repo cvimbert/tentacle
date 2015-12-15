@@ -79,45 +79,52 @@ Tentacle.ClassModelDescriptor = function (classId, jsonClassDescriptor, modelDes
     this.getObject = function (descriptorAttributes, sourceObject, destObject) {
         _.each(descriptorAttributes, function (attribute, attributeId) {
             if (!sourceObject || !sourceObject[attributeId]) {
+                
+                if (!destObject.attributes) {
+                    destObject.attributes = {};
+                }
+                
+                var destAttribute = destObject.attributes;
+                
                 switch (attribute.type) {
                     
                     case Tentacle.BaseObjectTypes.STRING:
-                        destObject[attributeId] = "";
+                        destAttribute[attributeId] = "";
                         break;
 
                     case Tentacle.BaseObjectTypes.NUMBER:
                         if (attribute.defaultvalue) {
-                            destObject[attributeId] = attribute.defaultvalue;
+                            destAttribute[attributeId] = attribute.defaultvalue;
                         } else {
-                            destObject[attributeId] = 0;
+                            destAttribute[attributeId] = 0;
                         }
                         break;
 
                     case Tentacle.BaseObjectTypes.BOOLEAN:
                         if (attribute.defaultvalue) {
-                            destObject[attributeId] = attribute.defaultvalue;
+                            destAttribute[attributeId] = attribute.defaultvalue;
                         } else {
-                            destObject[attributeId] = "false";
+                            destAttribute[attributeId] = "false";
                         }
                         break;
 
                     case Tentacle.ModelDecriptorTypes.CONDITIONAL_ATTRIBUTES_SET:
-                        destObject[attributeId] = "";
+                        destAttribute[attributeId] = "";
                         break;
 
                     case Tentacle.ModelDecriptorTypes.COLLECTION:
-                        destObject[attributeId] = [];
+                        destAttribute[attributeId] = [];
                         break;
 
                     default:
-                        destObject[attributeId] = "";
+                        destAttribute[attributeId] = "";
                 }
             } else {
                 if (attribute.type === Tentacle.ModelDecriptorTypes.CONDITIONAL_ATTRIBUTES_SET) {
-                    destObject[attributeId] = sourceObject[attributeId];
+                    destAttribute = sourceObject[attributeId];
                     self.getObject(attribute.attributesSets[sourceObject[attributeId]], sourceObject, destObject);
                 } else {
-                    destObject[attributeId] = sourceObject[attributeId];
+                    destAttribute = sourceObject[attributeId];
                 }
             }
         });
@@ -177,6 +184,7 @@ Tentacle.ClassModelDescriptor = function (classId, jsonClassDescriptor, modelDes
                 }
             }
 
+            // non utilisé
             if (attribute.linktype === "attributevaluenonull") {
 
                 if (item[attribute.link]) {
