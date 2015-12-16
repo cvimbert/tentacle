@@ -78,53 +78,51 @@ Tentacle.ClassModelDescriptor = function (classId, jsonClassDescriptor, modelDes
     
     this.getObject = function (descriptorAttributes, sourceObject, destObject) {
         _.each(descriptorAttributes, function (attribute, attributeId) {
-            if (!sourceObject || !sourceObject[attributeId]) {
+            if (!sourceObject || !sourceObject.attributes[attributeId]) {
                 
                 if (!destObject.attributes) {
                     destObject.attributes = {};
                 }
                 
-                var destAttribute = destObject.attributes;
-                
                 switch (attribute.type) {
                     
                     case Tentacle.BaseObjectTypes.STRING:
-                        destAttribute[attributeId] = "";
+                        destObject.attributes[attributeId] = "";
                         break;
 
                     case Tentacle.BaseObjectTypes.NUMBER:
                         if (attribute.defaultvalue) {
-                            destAttribute[attributeId] = attribute.defaultvalue;
+                            destObject.attributes[attributeId] = attribute.defaultvalue;
                         } else {
-                            destAttribute[attributeId] = 0;
+                            destObject.attributes[attributeId] = 0;
                         }
                         break;
 
                     case Tentacle.BaseObjectTypes.BOOLEAN:
                         if (attribute.defaultvalue) {
-                            destAttribute[attributeId] = attribute.defaultvalue;
+                            destObject.attributes[attributeId] = attribute.defaultvalue;
                         } else {
-                            destAttribute[attributeId] = "false";
+                            destObject.attributes[attributeId] = "false";
                         }
                         break;
 
                     case Tentacle.ModelDecriptorTypes.CONDITIONAL_ATTRIBUTES_SET:
-                        destAttribute[attributeId] = "";
+                        destObject.attributes[attributeId] = "";
                         break;
 
                     case Tentacle.ModelDecriptorTypes.COLLECTION:
-                        destAttribute[attributeId] = [];
+                        destObject.attributes[attributeId] = [];
                         break;
 
                     default:
-                        destAttribute[attributeId] = "";
+                        destObject.attributes[attributeId] = "";
                 }
             } else {
                 if (attribute.type === Tentacle.ModelDecriptorTypes.CONDITIONAL_ATTRIBUTES_SET) {
-                    destAttribute = sourceObject[attributeId];
-                    self.getObject(attribute.attributesSets[sourceObject[attributeId]], sourceObject, destObject);
+                    destObject.attributes[attributeId] = sourceObject.attributes[attributeId];
+                    self.getObject(attribute.attributesSets[sourceObject.attributes[attributeId]], sourceObject, destObject);
                 } else {
-                    destAttribute = sourceObject[attributeId];
+                    destObject.attributes[attributeId] = sourceObject.attributes[attributeId];
                 }
             }
         });
@@ -153,7 +151,7 @@ Tentacle.ClassModelDescriptor = function (classId, jsonClassDescriptor, modelDes
 
         if (attribute.type === Tentacle.ModelDecriptorTypes.CONDITIONAL_ATTRIBUTES_SET) {
 
-            if (item && item[attributeId]) {
+            if (item && item.attributes[attributeId]) {
                 var selectedBranch = attribute.attributesSets[item[attributeId]];
                 flattenByItemAction(item, selectedBranch, destDesc, indentation + 1);
             }
@@ -166,7 +164,7 @@ Tentacle.ClassModelDescriptor = function (classId, jsonClassDescriptor, modelDes
         } else if (attribute.type === Tentacle.ModelDecriptorTypes.LINKED_CONDITIONAL_ATTRIBUTES_SET) {
 
             if (attribute.linktype === Tentacle.ModelDecriptorTypes.REFERENCE_ATTRIBUTE_VALUE) {
-                var refItemId = item[attribute.linkedreference];
+                var refItemId = item.attributes[attribute.linkedreference];
 
                 if (refItemId) {
 
@@ -174,7 +172,7 @@ Tentacle.ClassModelDescriptor = function (classId, jsonClassDescriptor, modelDes
                     var targetItem = modelManager.getItem(refItemId);
 
                     // récupération de la propriété qui nous intéresse dans cet objet
-                    var targetItemSelectedValue = targetItem[attribute.linkedattribute];
+                    var targetItemSelectedValue = targetItem.attributes[attribute.linkedattribute];
 
                     // choix de la branche fonction de cette propriété
                     var selectedBranch = attribute.attributesSets[targetItemSelectedValue];
