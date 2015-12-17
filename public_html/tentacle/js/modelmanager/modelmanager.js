@@ -5,6 +5,9 @@ Tentacle.ModelManager = function () {
     var itemsByDescid = {};
     var items = {};
     
+    var models = {};
+    var modelsByType = {};
+    
     var modelDescriptor;
     
     var self = this;

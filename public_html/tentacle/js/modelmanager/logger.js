@@ -16,11 +16,11 @@ Tentacle.Logger = new function() {
         
         var argsToken = "$$";
         
-        if (typeof args === "array") {
+        if ((typeof args) === "object") {
             
             _.each(args, function (arg) {
                 var index = msg.indexOf(argsToken, 1);
-                msg = msg.slice(0, index - 1) + arg + msg.slice(index + argsToken.length, msg.length - 1);
+                msg = msg.slice(0, index) + arg + msg.slice(index + argsToken.length, msg.length);
             });
             
         } else if (typeof args === "string") {
