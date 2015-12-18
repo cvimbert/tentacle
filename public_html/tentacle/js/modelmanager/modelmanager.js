@@ -2,9 +2,6 @@
 
 Tentacle.ModelManager = function () {
     
-    var itemsByDescid = {};
-    var items = {};
-    
     var models = {};
     var modelsByType = {};
     
@@ -25,11 +22,11 @@ Tentacle.ModelManager = function () {
             items = JSON.parse(localStorage["model-" + id]);
 
             _.each(items, function (item) {
-                if (!itemsByDescid[item.type]) {
-                    itemsByDescid[item.type] = {};
+                if (!modelsByType[item.type]) {
+                    modelsByType[item.type] = {};
                 }
 
-                itemsByDescid[item.type][item.uid] = item;
+                modelsByType[item.type][item.uid] = item;
             });
             
             localStorage["defaultModel"] = id;
@@ -45,12 +42,12 @@ Tentacle.ModelManager = function () {
     };
 
     this.saveObject = function (objectType, object) {
-        if (!itemsByDescid[objectType]) {
-            itemsByDescid[objectType] = {};
+        if (!modelsByType[objectType]) {
+            modelsByType[objectType] = {};
         }
 
-        itemsByDescid[objectType][object.uid] = object;
-        items[object.uid] = object;
+        modelsByType[objectType][object.uid] = object;
+        models[object.uid] = object;
     };
     
     this.loadDefaultModel = function () {
@@ -89,27 +86,54 @@ Tentacle.ModelManager = function () {
     };
 
     this.getModel = function () {
-        return itemsByDescid;
+        return modelsByType;
     };
 
-    this.getModelById = function (descid) {
-        return itemsByDescid[descid];
+    this.getModelByType = function (type, filter) {
+        
+        if (!filter) {
+            return modelsByType[type];
+        } else {
+            
+            var filtered = {};
+            
+            for (var id in modelsByType[type]) {
+                var model = modelsByType[type][id];
+                
+                if ((typeof filter) === "filter") {
+                    
+                    if (model[filter.propertyName]) {
+                        
+                        if (model[filter.propertyName] === filter.propertyValue) {
+                            filtered[id] = model;
+                        }
+                        
+                    } else {
+                        // message d'erreur ou warning
+                    }
+                }
+                
+                // le cas de filtres à opérandes sera traité plus tard
+                /*if (filter.operand === Tentacle.filterOperand.OR) {
+                    
+                    
+                }*/
+            }
+            
+            return filtered;
+        }
     };
 
     this.deleteItem = function (descid, item) {
-        delete itemsByDescid[descid][item.uid];
-        delete items[item.uid];
+        delete modelsByType[descid][item.uid];
+        delete models[item.uid];
     };
 
     this.clearModel = function () {
-        _.each(itemsByDescid, function (modelContent, modelType) {
-            delete itemsByDescid[modelType];
+        _.each(modelsByType, function (modelContent, modelType) {
+            delete modelsByType[modelType];
         });
-
-        items = {};
-    };
-
-    this.getItem = function (uid) {
-        return items[uid];
+        
+        models = {};
     };
 };

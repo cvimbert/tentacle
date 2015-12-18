@@ -9,19 +9,15 @@ module.exports = function (grunt) {
     var buildPath = "public_html/tentacle/build/";
     grunt.initConfig({
         uglify: {
-            tentacle_first: {
-                files: {
-                    'public_html/tentacle/build/temp.min.js': [srcPath + 'modelmanager/*.js']
-                }
-            },
-            tentacle_second: {
+            tentacle: {
                 options: {
                     sourceMap: true,
+                    //sourceMapRoot: srcPath + "modelmanager",
                     sourceMapName: buildPath + 'tentacle.min.map'
                     
                 },
                 files: {
-                    'public_html/tentacle/build/tentacle.min.js': [srcPath + "tentacle.js", buildPath + 'temp.min.js']
+                    'public_html/tentacle/build/tentacle.min.js': [srcPath + "tentacle.js", srcPath + 'modelmanager/*.js']
                 }
             }
         },
@@ -38,5 +34,5 @@ module.exports = function (grunt) {
     });
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.registerTask('min', ['uglify:tentacle_first', "uglify:tentacle_second"]);
+    grunt.registerTask('min', ['uglify:tentacle']);
 };
