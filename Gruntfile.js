@@ -14,7 +14,7 @@ module.exports = function (grunt) {
                     sourceMap: true,
                     //sourceMapRoot: srcPath + "modelmanager",
                     sourceMapName: buildPath + 'tentacle.min.map'
-                    
+
                 },
                 files: {
                     'public_html/tentacle/build/tentacle.min.js': [srcPath + "tentacle.js", srcPath + 'modelmanager/*.js']
@@ -29,10 +29,40 @@ module.exports = function (grunt) {
                     spawn: false,
                 }
             }
+        },
+        concat: {
+            options: {
+                separator: '\n'
+            },
+            dist: {
+                src: [srcPath + 'tentacle.js', srcPath + 'modelmanager/*.js'],
+                dest: buildPath + 'tentacle.js'
+            }
+        },
+        jsdoc: {
+            dist: {
+                src: [buildPath + 'tentacle.js'],
+                options: {
+                    destination: 'public_html/tentacle/doc'
+                }
+            }
+        },
+        'jsdoc-ng': {
+            'dist': {
+                src: [srcPath + 'tentacle.js', srcPath + 'modelmanager/*.js'],
+                dest: 'public_html/tentacle/doc',
+                template: 'jsdoc-ng',
+                options: {
+                    
+                }
+            }
         }
-
     });
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.registerTask('min', ['uglify:tentacle']);
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-jsdoc-ng');
+    grunt.registerTask('build', ['uglify:tentacle', 'concat', 'jsdoc:dist']);
 };
