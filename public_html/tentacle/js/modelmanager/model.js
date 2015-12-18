@@ -36,7 +36,7 @@ Tentacle.Model = function (jsonModel) {
     this.get = function (property) {
 
         if (!this.attributes[property]) {
-            Tentacle.error(Tentacle.Exceptions.cantFindModelProperty, [property, this.type]);
+            //Tentacle.log(Tentacle.Exceptions.cantFindModelProperty, [property, this.type]);
             return null;
         }
 

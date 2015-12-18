@@ -1,21 +1,21 @@
 /* global Tentacle */
 
-Tentacle.filterOperand = {
+Tentacle.FilterOperand = {
     AND: "and",
     OR: "or"
 };
 
-Tentacle.filtersSet = function (operand) {
+Tentacle.FiltersSet = function (operand) {
     
     this.operand = operand;
     this.filters = [];
     
     this.addFilter = function (propertyName, propertyValue) {
-        this.filters.push(new Tentacle.filter(propertyName, propertyValue));
+        this.filters.push(new Tentacle.Filter(propertyName, propertyValue));
     };
 };
 
-Tentacle.filter = function (propertyName, propertyValue) {
+Tentacle.Filter = function (propertyName, propertyValue) {
     this.propertyName = propertyName;
     this.propertyValue = propertyValue;
 };
