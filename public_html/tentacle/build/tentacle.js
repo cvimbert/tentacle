@@ -135,6 +135,8 @@ Tentacle.Model = function (jsonModel) {
 
     this.set = function (property, value) {
         this.attributes[property] = value;
+        
+        // on ne devrait le faire que dans le cas des attributs conditionnels
         this.mutate();
     };
 
