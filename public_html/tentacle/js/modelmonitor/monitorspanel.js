@@ -1,8 +1,18 @@
 /* global Tentacle, angular */
 
-//Tentacle.Panels = function (modelManager) {
-    angular.module("model-monitor", [])
-        .controller("modelmonitorcontroller", function ($scope) {
-            
-    });
-//};
+var mainApp = angular.module("model-monitor", []);
+
+mainApp.controller("modelmonitorcontroller", function ($scope) {
+
+});
+
+
+Tentacle.MonitorPanel = function () {
+
+    this.create = function () {
+
+        var html = '<div ng-include="\'includes/basemonitor.html\'" ng-controller="modelmonitorcontroller"></div>';
+
+        $("#monitors-container").append(html);
+    };
+};
