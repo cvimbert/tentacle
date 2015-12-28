@@ -48,14 +48,36 @@ mainApp.controller("panelscontroller", function ($scope, shared) {
         $scope.descriptor = Tentacle.modelManager.getClassDescriptor($scope.item.type).flattenByItem($scope.item);
         $scope.descid = $scope.item.type;
 
-        if (args.pushInStack)
+        if (!args.pushInStack)
             $scope.backItemsStack.push($scope.item);
-        
+
         if (args.pending)
             pendingItems[$scope.item.uid] = args.pending;
 
         $("#modal-desc").modal(modalOptions);
     });
+
+
+    // les deux fonctions qui suivent sont dupliquées.
+    // Voir comment mutualiser tout ça
+
+    $scope.editItem = function (uid) {
+        var item = Tentacle.modelManager.getModelByUid(uid);
+        $scope.editItemByItem(_.clone(item));
+    };
+
+    $scope.editItemByItem = function (item, isback) {
+
+        // attention, ici pas de clone, donc pas de données temporaires d'item
+
+        var args = {
+            item: item,
+            descriptor: Tentacle.modelManager.getClassDescriptor(item.type).flattenByItem(item),
+            pushInStack: isback
+        };
+
+        $scope.$emit("editItem", args);
+    };
 
 
     $scope.closeEditionModal = function () {
@@ -81,8 +103,8 @@ mainApp.controller("panelscontroller", function ($scope, shared) {
     };
 
     /*$scope.$watch('', function (value) {
-
-    });*/
+     
+     });*/
 
     $scope.attributeSetSelected = function () {
         $scope.item.mutate();
@@ -96,7 +118,107 @@ mainApp.controller("panelscontroller", function ($scope, shared) {
 
         $scope.descriptor = Tentacle.modelManager.getClassDescriptor($scope.descid).flattenByItem($scope.item);
     };
-    
+
+    $scope.getReferences = function (targetDescid) {
+        var mod = Tentacle.modelManager.getModelById(targetDescid);
+        return mod;
+    };
+
+    $scope.validate = function () {
+        validatePendingItem($scope.item.uid);
+        Tentacle.modelManager.saveObject($scope.descid, $scope.item);
+    };
+
+    $scope.getReferencesCollection = function (item, attribute) {
+
+        // ceci est peut-être à supprimer pour un truc plus souple
+
+        if (attribute.referencetype === "linkedcollection") {
+
+            var ret = {};
+
+            if (item.get(attribute.linkedcollectionattribute)) {
+                var linkedItemAttribute = item.get(attribute.linkedcollectionattribute);
+                var litem = Tentacle.modelManager.getItem(linkedItemAttribute);
+
+                var itemValues = litem.get(attribute.linkedcollectionattributevalue);
+
+                _.each(itemValues, function (itemUid) {
+                    var it = Tentacle.modelManager.getItem(itemUid);
+                    ret[itemUid] = it;
+                });
+            }
+
+            return ret;
+
+        } else {
+            //return $scope.completeModel[attribute.referencetype];
+            return Tentacle.modelManager.getModelByType(attribute.referencetype);
+        }
+
+        return {};
+    };
+
+    $scope.goBack = function () {
+
+        deletePendingItem($scope.item.uid);
+
+        // attention, erreur là dedans
+        if ($scope.backItemsStack.length > 1) {
+            var it = $scope.backItemsStack.pop();
+            $scope.editItemByItem($scope.backItemsStack[$scope.backItemsStack.length - 1], true);
+        } else {
+            $scope.closeEditionModal();
+        }
+    };
+
+    function deletePendingItem(uid) {
+        delete pendingItems[uid];
+    }
+
+    function validatePendingItem(uid) {
+
+        if (pendingItems[uid]) {
+            var pitem = pendingItems[uid];
+
+            var toDesc = Tentacle.modelManager.getClassDescriptor(pitem.addto.type).getRaw();
+            var toType = toDesc.attributes[pitem.addin].type;
+
+            if (pitem.type === "reference") {
+                if (toType === "collection") {
+                    pitem.addto.attributes[pitem.addin].push($scope.item.uid);
+                } else if (toType === "reference") {
+                    pitem.addto.attributes[pitem.addin] = $scope.item.uid;
+                }
+            }
+
+            if (pitem.type === "object") {
+                if (toType === "collection") {
+                    pitem.addto.attributes[pitem.addin].push(pitem.added);
+                } else if (toType === "reference") {
+                    pitem.addto.attributes[pitem.addin] = pitem.added;
+                }
+            }
+        }
+    }
+
+
+    $scope.validateAndGoBack = function () {
+        $scope.validate();
+        $scope.goBack();
+    };
+
+    $scope.getNameByUid = function (uid) {
+        var item = Tentacle.modelManager.getModelByUid(uid);
+        return $scope.getName(item);
+    };
+
+    $scope.closeEditionModal = function () {
+        $scope.backItemsStack = [];
+        clearPendingItems();
+        $("#modal-desc").modal("hide");
+    };
+
     // en double
     $scope.addReferenceItem = function (descid, addto, addin) {
         var item = Tentacle.modelManager.addModel(descid, false);
@@ -109,14 +231,14 @@ mainApp.controller("panelscontroller", function ($scope, shared) {
         var args = {
             item: item,
             descriptor: Tentacle.modelManager.getClassDescriptor(item.type).flattenByItem(item),
-            pushInStack: true,
+            pushInStack: false,
             pending: pitem
         };
 
         $scope.$emit("editItem", args);
     };
-    
-    
+
+
     // utilisé deux fois, voir si on peut mutualiser
     $scope.getName = function (item, defaultvalue) {
         if (item.get("name")) {
@@ -152,7 +274,7 @@ mainApp.controller("modelmonitorcontroller", function ($scope, shared) {
         var args = {
             item: item,
             descriptor: Tentacle.modelManager.getClassDescriptor(item.type).flattenByItem(item),
-            pushInStack: true,
+            pushInStack: false,
             pending: pitem
         };
 
@@ -161,11 +283,11 @@ mainApp.controller("modelmonitorcontroller", function ($scope, shared) {
 
     $scope.editItem = function (uid) {
         var item = Tentacle.modelManager.getModelByUid(uid);
-        $scope.editItemByItem(_.clone(item), true);
+        $scope.editItemByItem(_.clone(item));
     };
 
     $scope.editItemByItem = function (item, isback) {
-        
+
         // attention, ici pas de clone, donc pas de données temporaires d'item
 
         var args = {
