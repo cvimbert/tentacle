@@ -74,7 +74,7 @@ Tentacle.ClassModelDescriptor = function (classId, jsonClassDescriptor, modelDes
         if (attribute.type === Tentacle.ModelDecriptorTypes.CONDITIONAL_ATTRIBUTES_SET) {
 
             if (item && item.attributes[attributeId]) {
-                var selectedBranch = attribute.attributesSets[item[attributeId]];
+                var selectedBranch = attribute.attributesSets[item.attributes[attributeId]];
                 flattenByItemAction(item, selectedBranch, destDesc, indentation + 1);
             }
 
@@ -104,7 +104,7 @@ Tentacle.ClassModelDescriptor = function (classId, jsonClassDescriptor, modelDes
                 }
             }
 
-            // non utilisé
+            // non utilisé, voir si on peut supprimer
             if (attribute.linktype === "attributevaluenonull") {
 
                 if (item[attribute.link]) {

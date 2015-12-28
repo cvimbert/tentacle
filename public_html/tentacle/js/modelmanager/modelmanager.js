@@ -16,11 +16,12 @@ Tentacle.ModelManager = function () {
         //self.loadDefaultModel();
     };
 
-    this.addModel = function (type) {
+    this.addModel = function (type, register) {
         var model = new Tentacle.Model();
         model.create(type, this);
 
-        this.registerModel(model);
+        if (register !== false)
+            this.registerModel(model);
 
         return model;
     };
