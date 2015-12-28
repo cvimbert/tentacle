@@ -1,10 +1,10 @@
-<div id="model-displayer-test" class="model-displayer">
+<div id="model-displayer-{{ id }}" class="model-displayer">
     <span class="title">{{ name }}</span>
-    <button ng-click="" class="glyphicon-plus btn-add btn btn-default" type="submit"></button>
+    <button ng-click="addReferenceItem(modeltype, null)" class="glyphicon-plus btn-add btn btn-default" type="submit"></button>
     <div class="item-displayer-container">
-        <div ng-click="" ng-repeat="model in models" class="item-displayer">
-            temp
-            <div ng-click="" class="item-delete-button"><span class="glyphicon glyphicon-remove"></span></div>
+        <div ng-click="editItem(model.uid)" ng-repeat="model in models" class="item-displayer">
+            {{ getName(model) }}
+            <div ng-click="deleteItem(modeltype, model, $event)" class="item-delete-button"><span class="glyphicon glyphicon-remove"></span></div>
         </div>
     </div>
 </div>

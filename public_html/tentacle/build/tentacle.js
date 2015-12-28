@@ -480,6 +480,10 @@ Tentacle.ModelManager = function () {
     this.getModel = function () {
         return modelsByType;
     };
+    
+    this.getModelByUid = function (uid) {
+        return models[uid];
+    };
 
     this.getModelByType = function (type, filter) {
 
