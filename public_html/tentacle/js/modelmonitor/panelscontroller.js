@@ -33,15 +33,7 @@ mainApp.controller("panelscontroller", function ($scope, shared) {
         keyboard: false
     };
 
-    /*$scope.$on("openDescModal", function (event, args) {
-     $("#modal-desc").modal(modalOptions);
-     
-     $scope.descid = args.descid;
-     $scope.descriptor = args.descriptor;
-     $scope.item = args.model;
-     });*/
-
-
+    // TODO doit pouvoir être remplacé par autre chose
     $scope.$on("editItem", function (event, args) {
         $scope.item = args.item;
 
@@ -58,15 +50,14 @@ mainApp.controller("panelscontroller", function ($scope, shared) {
     });
 
 
-    // les deux fonctions qui suivent sont dupliquées.
-    // Voir comment mutualiser tout ça
-
-    $scope.editItem = function (uid) {
+    shared.editItem = function (uid) {
         var item = Tentacle.modelManager.getModelByUid(uid);
         $scope.editItemByItem(_.clone(item));
     };
+    
+    $scope.editItem = shared.editItem;
 
-    $scope.editItemByItem = function (item, isback) {
+    shared.editItemByItem = function (item, isback) {
 
         // attention, ici pas de clone, donc pas de données temporaires d'item
 
@@ -78,6 +69,8 @@ mainApp.controller("panelscontroller", function ($scope, shared) {
 
         $scope.$emit("editItem", args);
     };
+    
+    $scope.editItemByItem = shared.editItemByItem;
 
 
     $scope.closeEditionModal = function () {
@@ -102,9 +95,6 @@ mainApp.controller("panelscontroller", function ($scope, shared) {
         }
     };
 
-    /*$scope.$watch('', function (value) {
-     
-     });*/
 
     $scope.attributeSetSelected = function () {
         $scope.item.mutate();
@@ -219,8 +209,8 @@ mainApp.controller("panelscontroller", function ($scope, shared) {
         $("#modal-desc").modal("hide");
     };
 
-    // en double
-    $scope.addReferenceItem = function (descid, addto, addin) {
+    
+    shared.addReferenceItem = function (descid, addto, addin) {
         var item = Tentacle.modelManager.addModel(descid, false);
 
         var pitem;
@@ -237,10 +227,12 @@ mainApp.controller("panelscontroller", function ($scope, shared) {
 
         $scope.$emit("editItem", args);
     };
+    
+    $scope.addReferenceItem = shared.addReferenceItem;
 
 
     // utilisé deux fois, voir si on peut mutualiser
-    $scope.getName = function (item, defaultvalue) {
+    shared.getName = function (item, defaultvalue) {
         if (item.get("name")) {
             return item.get("name");
         } else {
@@ -251,6 +243,8 @@ mainApp.controller("panelscontroller", function ($scope, shared) {
             }
         }
     };
+    
+    $scope.getName = shared.getName;
 
 });
 
@@ -262,54 +256,13 @@ mainApp.controller("modelmonitorcontroller", function ($scope, shared) {
     };
 
 
-    // en double
-    $scope.addReferenceItem = function (descid, addto, addin) {
-        var item = Tentacle.modelManager.addModel(descid, false);
+    $scope.addReferenceItem = shared.addReferenceItem;
 
-        var pitem;
-        if (addto && addin && $scope.item.uid) {
-            pitem = {addto: addto, addin: addin, added: item.uid, type: "reference"};
-        }
+    $scope.editItem = shared.editItem;
 
-        var args = {
-            item: item,
-            descriptor: Tentacle.modelManager.getClassDescriptor(item.type).flattenByItem(item),
-            pushInStack: false,
-            pending: pitem
-        };
+    $scope.editItemByItem = shared.editItemByItem;
 
-        $scope.$emit("editItem", args);
-    };
-
-    $scope.editItem = function (uid) {
-        var item = Tentacle.modelManager.getModelByUid(uid);
-        $scope.editItemByItem(_.clone(item));
-    };
-
-    $scope.editItemByItem = function (item, isback) {
-
-        // attention, ici pas de clone, donc pas de données temporaires d'item
-
-        var args = {
-            item: item,
-            descriptor: Tentacle.modelManager.getClassDescriptor(item.type).flattenByItem(item),
-            pushInStack: isback
-        };
-
-        $scope.$emit("editItem", args);
-    };
-
-    $scope.getName = function (item, defaultvalue) {
-        if (item.get("name")) {
-            return item.get("name");
-        } else {
-            if (defaultvalue !== undefined) {
-                return defaultvalue;
-            } else {
-                return item.uid;
-            }
-        }
-    };
+    $scope.getName = shared.getName;
 
     $scope.deleteItem = function (descid, item, $event) {
         $event.stopPropagation();
