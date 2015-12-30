@@ -1,12 +1,15 @@
 var monitorDesc = {
     sets: {
         panelsset1: {
-            template: "",
+            template: "includes/layout.html",
+            title: "Set de panneaux 1",
+            css: "test-set1",
             panels: {
                 panel1: {
                     name: "Panneau des sprites",
                     type: "Sprite",
-                    containerid: "centera1"
+                    containerid: "centera1",
+                    css: "test-panel1"
                 },
                 panel2: {
                     name: "Panneau des variables",
@@ -15,18 +18,20 @@ var monitorDesc = {
                 }
             },
             buttons: {
-                bouton1: {
-                    label: "Texte 1",
-                    containerid: "top"
-                },
-                bouton2: {
-                    label: "Texte 2",
-                    containerid: "top"
+                bouton1a: {
+                    label: "Aller au panneau 2",
+                    containerid: "top-right",
+                    action: {
+                        type: "navigatetopanel",
+                        panelid: "panelsset2"
+                    }
                 }
             }
         },
         panelsset2: {
-            template: "",
+            template: "includes/layout.html",
+            title: "Set de panneaux 2",
+            css: "",
             panels: {
                 panel1b: {
                     name: "Panneau des variables bbbb",
@@ -35,8 +40,18 @@ var monitorDesc = {
                 }
             },
             buttons: {
-                
+                bouton1b: {
+                    label: "Aller au panneau 1",
+                    containerid: "top-right",
+                    action: {
+                        type: "navigatetopanel",
+                        panelid: "panelsset1"
+                    }
+                }
             }
+        },
+        common: {
+            
         }
     },
     defaultset: "panelsset1"

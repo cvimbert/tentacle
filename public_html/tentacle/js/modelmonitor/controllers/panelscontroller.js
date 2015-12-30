@@ -1,21 +1,6 @@
-/* global angular, Tentacle, modelDescriptorV3, monitorDesc, _, Localization */
+/* global Tentacle */
 
-var mainApp = angular.module("monitoring-panel", ['ngRoute']);
-
-mainApp.factory('shared', function () {
-    return {
-        
-    };
-});
-
-var tmpl;
-var template;
-
-mainApp.controller("panelcontroller", function($scope) {
-    
-});
-
-mainApp.controller("panelscontroller", function ($scope, $location, shared) {
+Tentacle.mainApp.controller("panelscontroller", function ($scope, $location, shared) {
 
     var defaultLanguage = "fr";
     $scope.backItemsStack = [];
@@ -27,7 +12,7 @@ mainApp.controller("panelscontroller", function ($scope, $location, shared) {
         keyboard: false
     };
 
-    // TODO doit pouvoir être remplacé par autre chose
+    // TODO: doit pouvoir être remplacé par autre chose
     $scope.$on("editItem", function (event, args) {
         $scope.item = args.item;
 
@@ -65,7 +50,7 @@ mainApp.controller("panelscontroller", function ($scope, $location, shared) {
     };
 
     $scope.editItemByItem = shared.editItemByItem;
-    
+
     $scope.navigateTo = function (panelsSetId) {
         $location.path("/" + panelsSetId);
     };
@@ -139,7 +124,6 @@ mainApp.controller("panelscontroller", function ($scope, $location, shared) {
             return ret;
 
         } else {
-            //return $scope.completeModel[attribute.referencetype];
             return Tentacle.modelManager.getModelByType(attribute.referencetype);
         }
 
@@ -244,129 +228,3 @@ mainApp.controller("panelscontroller", function ($scope, $location, shared) {
     $scope.getName = shared.getName;
 
 });
-
-mainApp.controller("modelmonitorcontroller", function ($scope, shared) {
-
-    $scope.getModels = function () {
-        $scope.models = Tentacle.modelManager.getModelByType($scope.modeltype);
-    };
-
-    $scope.addReferenceItem = shared.addReferenceItem;
-
-    $scope.editItem = shared.editItem;
-
-    $scope.editItemByItem = shared.editItemByItem;
-
-    $scope.getName = shared.getName;
-
-    $scope.deleteItem = function (descid, item, $event) {
-        $event.stopPropagation();
-        Tentacle.modelManager.deleteItem(descid, item);
-    };
-});
-
-$(document).ready(function () {
-    var app = new Tentacle.MonitoringApp();
-});
-
-Tentacle.MonitoringApp = function () {
-
-    var panelsSets = {};
-
-    var modelManager = new Tentacle.ModelManager();
-    modelManager.init(modelDescriptorV3);
-
-    var sp1 = modelManager.addModel("Sprite");
-    sp1.set("name", "sprite 1");
-    var sp2 = modelManager.addModel("Sprite");
-    sp2.set("name", "sprite 2");
-    var var1 = modelManager.addModel("Variable");
-    var1.set("name", "variable 1");
-    //var1.set("variabletype", "boolean");
-
-    // voir si il existe une manière plus judicieuse de rendre dispo le modelManager
-    Tentacle.modelManager = modelManager;
-
-    // à remplacer plus tard par le chargement des différents templates
-    $.get("includes/layout.html", function (data) {
-        template = data;
-        defaultSetId = monitorDesc.defaultset;
-
-        for (var setId in monitorDesc.sets) {
-            var panelsSet = new Tentacle.MonitorPanelsSet(monitorDesc.sets[setId]);
-            panelsSet.init();
-            panelsSets[setId] = panelsSet;
-        }
-
-        // initialisation du router
-        mainApp.config(['$routeProvider',
-            function ($routeProvider) {
-                
-                for (var setId in panelsSets) {
-                    $routeProvider.when("/" + setId, {
-                        template: panelsSets[setId].template,
-                        controller: 'panelcontroller'
-                    });
-                }
-                
-                $routeProvider.otherwise({
-                    redirectTo: '/' + defaultSetId
-                });
-            }]);
-
-
-        angular.bootstrap(document, ["monitoring-panel"]);
-    });
-};
-
-Tentacle.MonitorPanelsSet = function (panelDesc) {
-
-    this.template = $(template);
-
-    this.init = function () {
-        for (var uPanelId in panelDesc.panels) {
-            var uPanelDesc = panelDesc.panels[uPanelId];
-
-            var panel = new Tentacle.MonitorPanel(uPanelId, uPanelDesc, this);
-            panel.create();
-        }
-        
-        for (var buttonId in panelDesc.buttons) {
-            var buttonDesc = panelDesc.buttons[buttonId];
-            
-            var button = new Tentacle.MonitorButton(buttonId, buttonDesc, this);
-            button.create();
-        }
-    };
-
-    this.display = function () {
-
-    };
-};
-
-Tentacle.MonitorButton = function (id, buttonDescriptor, panelsSet) {
-    
-    this.create = function () {
-        var tp = _.template('<button id="<%= id %>" ng-click="navigateTo(\'panelsset2\')" type="button" class="btn btn-primary"><%= label %></button>');
-        var html = tp({
-            id: id,
-            label: buttonDescriptor.label
-        });
-        
-        $("#" + buttonDescriptor.containerid, panelsSet.template).append(html);
-    };
-};
-
-Tentacle.MonitorPanel = function (id, panelDesc, panelsSet) {
-
-    this.create = function () {
-        var tp = _.template('<div id="<%= id %>" ng-init="name=\'<%= name %>\'; modeltype=\'<%= modeltype %>\'; getModels();" ng-controller="modelmonitorcontroller" ng-include="\'includes/basemonitor.html\'">Container1</div>');
-        var html = tp({
-            id: id,
-            name: panelDesc.name,
-            modeltype: panelDesc.type
-        });
-
-        $("#" + panelDesc.containerid, panelsSet.template).append(html);
-    };
-};

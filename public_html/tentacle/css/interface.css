@@ -211,3 +211,18 @@ body {
     color: #6B6B6B;
 }
 
+#title {
+    text-align: center;
+    font-size: 21px;
+    font-weight: bold;
+}
+
+#top-right {
+    text-align: right;
+    padding: 16px;
+}
+
+#top-left {
+    text-align: left;
+    padding: 16px;
+}
