@@ -14,7 +14,18 @@ var monitorDesc = {
                 panel2: {
                     name: "Panneau des variables",
                     type: "Variable",
-                    containerid: "centera2"
+                    containerid: "centera2",
+                    presets: {
+                        variabletype: "string"
+                    }
+                },
+                panel3: {
+                    name: "Panneau des variables 2",
+                    type: "Variable",
+                    containerid: "centerb1",
+                    presets: {
+                        variabletype: "number"
+                    }
                 }
             },
             buttons: {

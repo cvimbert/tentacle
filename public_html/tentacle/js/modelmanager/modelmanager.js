@@ -16,9 +16,9 @@ Tentacle.ModelManager = function () {
         //self.loadDefaultModel();
     };
 
-    this.addModel = function (type, register) {
+    this.addModel = function (type, register, presets) {
         var model = new Tentacle.Model();
-        model.create(type, this);
+        model.create(type, this, presets);
 
         if (register !== false)
             this.registerModel(model);

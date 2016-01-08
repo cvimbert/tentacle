@@ -1,6 +1,17 @@
 /* global Tentacle */
 
 Tentacle.mainApp.controller("modelmonitorcontroller", function ($scope, shared) {
+    
+    $scope.init = function (datas) {
+       var serDatas = atob(datas);
+       datasObj = JSON.parse(serDatas);
+       
+       for (var propName in datasObj) {
+           $scope[propName] = datasObj[propName];
+       }
+       
+       $scope.getModels();
+    };
 
     $scope.getModels = function () {
         $scope.models = Tentacle.modelManager.getModelByType($scope.modeltype);

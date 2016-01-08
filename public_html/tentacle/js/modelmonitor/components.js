@@ -65,7 +65,19 @@ Tentacle.MonitorButton = function (id, buttonDescriptor, panelsSet) {
 Tentacle.MonitorPanel = function (id, panelDesc, panelsSet) {
 
     this.create = function () {
-        var tp = _.template('<div id="<%= id %>" ng-init="name=\'<%= name %>\'; modeltype=\'<%= modeltype %>\'; getModels();" ng-controller="<%= controller %>" ng-include="\'<%= monitortemplate %>\'">Container1</div>');
+        var tp = _.template('<div id="<%= id %>" ng-init="init(\'<%= datas %>\');" ng-controller="<%= controller %>" ng-include="\'<%= monitortemplate %>\'">Container1</div>');
+        
+        // passage de données au scope via ng-init
+        var datas = {
+            name: panelDesc.name,
+            modeltype: panelDesc.type
+        };
+        
+        // sérialisation des données passées en paramètre au scope
+        var serDatas = JSON.stringify(datas);
+        
+        // codage en base64 de cette chaine
+        serDatas = btoa(serDatas);
         
         var template;
         
@@ -89,7 +101,8 @@ Tentacle.MonitorPanel = function (id, panelDesc, panelsSet) {
             name: panelDesc.name,
             modeltype: panelDesc.type,
             monitortemplate: template,
-            controller: controller
+            controller: controller,
+            datas: serDatas
         });
         
         html = $(html);

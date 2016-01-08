@@ -19,11 +19,17 @@ Tentacle.Model = function (jsonModel) {
         this.mutate();
     };
     
-    this.create = function (type, modManager) {
+    this.create = function (type, modManager, presets) {
         this.type = type;
         this.uid = uuid.v4();
         
         modelManager = modManager;
+        
+        if (presets) {
+            for (var id in presets) {
+                this.set(id, presets[id]);
+            }
+        }
         
         this.init();
     };
