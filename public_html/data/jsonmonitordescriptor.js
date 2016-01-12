@@ -1,31 +1,17 @@
 var monitorDesc = {
     sets: {
         panelsset1: {
-            template: "includes/layout.html",
+            template: "includes/layout1.html",
             title: "Set de panneaux 1",
             css: "test-set1",
             panels: {
                 panel1: {
                     name: "Panneau des sprites",
                     type: "Sprite",
-                    containerid: "centera1",
-                    css: "test-panel1"
-                },
-                panel2: {
-                    name: "Panneau des variables",
-                    type: "Variable",
-                    containerid: "centera2",
-                    presets: {
-                        variabletype: "string"
-                    }
-                },
-                panel3: {
-                    name: "Panneau des variables 2",
-                    type: "Variable",
-                    containerid: "centerb1",
-                    presets: {
-                        variabletype: "number"
-                    }
+                    containerid: "main",
+                    css: "test-panel1",
+                    template: "includes/spritespanel.html",
+                    controller: "spritespanelcontroller"
                 }
             },
             buttons: {
@@ -36,6 +22,13 @@ var monitorDesc = {
                         type: "navigatetopanel",
                         panelid: "panelsset2"
                     }
+                },
+                bouton1b: {
+                    label: "Enregistrer",
+                    containerid: "top-right",
+                    action: {
+                        type: "save"
+                    }
                 }
             }
         },
@@ -45,9 +38,15 @@ var monitorDesc = {
             css: "",
             panels: {
                 panel1b: {
-                    name: "Panneau des variables bbbb",
-                    type: "Variable",
+                    name: "Panneau des contrôles",
+                    type: "ControlSprite",
                     containerid: "centera1"
+                },
+                panel2b: {
+                    name: "Panneau des sprites",
+                    type: "Sprite",
+                    containerid: "centera2",
+                    css: "test-panel1"
                 }
             },
             buttons: {

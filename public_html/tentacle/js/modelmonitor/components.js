@@ -42,6 +42,10 @@ Tentacle.MonitorButton = function (id, buttonDescriptor, panelsSet) {
             if (buttonDescriptor.action.type === "navigatetopanel") {
                 clickAction = "navigateTo('" + buttonDescriptor.action.panelid + "')";
             }
+            
+            if (buttonDescriptor.action.type === "save") {
+                    clickAction = "save()";
+            }
         }
 
         var html = tp({

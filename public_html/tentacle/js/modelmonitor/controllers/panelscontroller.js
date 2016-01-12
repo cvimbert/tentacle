@@ -1,4 +1,4 @@
-/* global Tentacle */
+/* global Tentacle, Localization, _ */
 
 Tentacle.mainApp.controller("panelscontroller", function ($scope, $location, shared) {
 
@@ -227,4 +227,12 @@ Tentacle.mainApp.controller("panelscontroller", function ($scope, $location, sha
 
     $scope.getName = shared.getName;
 
+    $scope.save = function () {
+        Tentacle.modelManager.saveToStorage("base");
+    };
+    
+    $scope.load = function () {
+        Tentacle.modelManager.loadModel("base");
+    };
+    
 });

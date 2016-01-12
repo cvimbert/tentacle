@@ -1,0 +1,19 @@
+<div class="model-displayer">
+    <button ng-click="addReferenceItem(modeltype, null)" class="glyphicon-plus btn-add btn btn-default" type="submit"></button>
+    <button ng-click="addReferenceItem('ControlSprite', null)" class="glyphicon-plus btn-add btn btn-default" type="submit"></button>
+    <div class="game-container">
+
+        <div id="backgroundcontainer">
+
+        </div>
+        <div id="spritescontainer">
+            <div class="game-element enabled ui-widget-content" ng-repeat="model in models" draggable style="left: {{model.attributes.x}}px; top: {{model.attributes.y}}px"><img ng-src="../../../data/packages/{{getSpriteUrl(model);}}"></div>
+        </div>
+        <div id="foregroundcontainer">
+
+        </div>
+        <div id="controlscontainer">
+            <div class="game-element enabled ui-widget-content" ng-repeat="control in controlSprites" draggable style="left: {{control.attributes.x}}px; top: {{control.attributes.y}}px"><img ng-src="../../../data/packages/{{getControlUrl(control);}}"></div>
+        </div>
+    </div>
+</div>

@@ -80,6 +80,7 @@ body {
     /* width: 100%; */
     padding: 5px;
     background-color: white;
+    vertical-align: le;
 }
 
 .monitor-modal-input-group input.ng-invalid, .monitor-modal-input-group select.ng-invalid {

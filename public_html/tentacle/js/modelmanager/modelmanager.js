@@ -40,14 +40,15 @@ Tentacle.ModelManager = function () {
     this.loadModel = function (id) {
 
         if (localStorage["model-" + id]) {
-            items = JSON.parse(localStorage["model-" + id]);
+            var items = JSON.parse(localStorage["model-" + id]);
 
             _.each(items, function (item) {
                 if (!modelsByType[item.type]) {
                     modelsByType[item.type] = {};
                 }
 
-                modelsByType[item.type][item.uid] = item;
+                modelsByType[item.type][item.uid] = new Tentacle.Model(item, self);
+                models[item.uid] = modelsByType[item.type][item.uid];
             });
 
             localStorage["defaultModel"] = id;
@@ -89,9 +90,9 @@ Tentacle.ModelManager = function () {
 
     this.saveToStorage = function (id) {
         if (!id) {
-            localStorage["model"] = JSON.stringify(items);
+            localStorage["model"] = JSON.stringify(models);
         } else {
-            localStorage["model-" + id] = JSON.stringify(items);
+            localStorage["model-" + id] = JSON.stringify(models);
         }
 
         localStorage["defaultModel"] = id;

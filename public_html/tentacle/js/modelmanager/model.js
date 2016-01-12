@@ -1,6 +1,6 @@
 /* global Tentacle, uuid, _ */
 
-Tentacle.Model = function (jsonModel) {
+Tentacle.Model = function (jsonModel, mmanager) {
 
     var self = this;
     var modelManager;
@@ -13,6 +13,10 @@ Tentacle.Model = function (jsonModel) {
         for (var id in jsonModel) {
             this[id] = jsonModel[id];
         }
+    }
+    
+    if (mmanager) {
+        modelManager = mmanager;
     }
 
     this.init = function () {

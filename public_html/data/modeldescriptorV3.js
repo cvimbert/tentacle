@@ -472,6 +472,44 @@ var modelDescriptorV3 = {
             }
         }
     },
+    BackgroundFileReference: {
+        referenceable: true,
+        attributes: {
+            name: {
+                type: "string",
+                defaultvalue: "controlfilename",
+                required: true
+            },
+            file: {
+                type: "string",
+                required: true
+            },
+            package: {
+                type: "reference",
+                referencetype: "Package",
+                required: true
+            }
+        }
+    },
+    ForegroundFileReference: {
+        referenceable: true,
+        attributes: {
+            name: {
+                type: "string",
+                defaultvalue: "controlfilename",
+                required: true
+            },
+            file: {
+                type: "string",
+                required: true
+            },
+            package: {
+                type: "reference",
+                referencetype: "Package",
+                required: true
+            }
+        }
+    },
     Sprite: {
         referenceable: true,
         attributes: {
@@ -498,6 +536,52 @@ var modelDescriptorV3 = {
         }
     },
     ControlSprite: {
+        referenceable: true,
+        attributes: {
+            name: {
+                type: "string",
+                defaultvalue: "controlspritename",
+                required: true
+            },
+            reference: {
+                type: "reference",
+                referencetype: "ControlFileReference",
+                required: true
+            },
+            x: {
+                type: "number",
+                required: true
+            },
+            y: {
+                type: "number",
+                required: true
+            }
+        }
+    },
+    BackgroundSprite: {
+        referenceable: true,
+        attributes: {
+            name: {
+                type: "string",
+                defaultvalue: "controlspritename",
+                required: true
+            },
+            reference: {
+                type: "reference",
+                referencetype: "ControlFileReference",
+                required: true
+            },
+            x: {
+                type: "number",
+                required: true
+            },
+            y: {
+                type: "number",
+                required: true
+            }
+        }
+    },
+    ForegroundSprite: {
         referenceable: true,
         attributes: {
             name: {
