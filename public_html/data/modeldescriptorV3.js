@@ -563,12 +563,12 @@ var modelDescriptorV3 = {
         attributes: {
             name: {
                 type: "string",
-                defaultvalue: "controlspritename",
+                defaultvalue: "bacgroundspritename",
                 required: true
             },
             reference: {
                 type: "reference",
-                referencetype: "ControlFileReference",
+                referencetype: "BackgroundFileReference",
                 required: true
             },
             x: {
@@ -586,12 +586,12 @@ var modelDescriptorV3 = {
         attributes: {
             name: {
                 type: "string",
-                defaultvalue: "controlspritename",
+                defaultvalue: "foregroundspritename",
                 required: true
             },
             reference: {
                 type: "reference",
-                referencetype: "ControlFileReference",
+                referencetype: "ForegroundFileReference",
                 required: true
             },
             x: {

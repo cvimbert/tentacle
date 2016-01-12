@@ -6,7 +6,7 @@ var monitorDesc = {
             css: "test-set1",
             panels: {
                 panel1: {
-                    name: "Panneau des sprites",
+                    name: "Panneau d'édition",
                     type: "Sprite",
                     containerid: "main",
                     css: "test-panel1",
@@ -46,6 +46,18 @@ var monitorDesc = {
                     name: "Panneau des sprites",
                     type: "Sprite",
                     containerid: "centera2",
+                    css: "test-panel1"
+                },
+                panel3b: {
+                    name: "Panneau de premier plan",
+                    type: "ForegroundSprite",
+                    containerid: "centerb1",
+                    css: "test-panel1"
+                },
+                panel4b: {
+                    name: "Panneau d'arrière plan",
+                    type: "BackgroundSprite",
+                    containerid: "centerb2",
                     css: "test-panel1"
                 }
             },

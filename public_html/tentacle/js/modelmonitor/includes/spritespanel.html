@@ -1,19 +1,22 @@
 <div class="model-displayer">
+    <div class="title">{{ name }}</div>
     <button ng-click="addReferenceItem(modeltype, null)" class="glyphicon-plus btn-add btn btn-default" type="submit"></button>
     <button ng-click="addReferenceItem('ControlSprite', null)" class="glyphicon-plus btn-add btn btn-default" type="submit"></button>
+    <button ng-click="addReferenceItem('BackgroundSprite', null)" class="glyphicon-plus btn-add btn btn-default" type="submit"></button>
+    <button ng-click="addReferenceItem('ForegroundSprite', null)" class="glyphicon-plus btn-add btn btn-default" type="submit"></button>
     <div class="game-container">
 
         <div id="backgroundcontainer">
-
+            <div class="game-element enabled ui-widget-content" ng-repeat="bsprite in backgroundSprites" draggable style="left: {{bsprite.attributes.x}}px; top: {{bsprite.attributes.y}}px"><img ng-src="../../../data/packages/{{getImageUrl(bsprite, 'decorations');}}"></div>
         </div>
         <div id="spritescontainer">
-            <div class="game-element enabled ui-widget-content" ng-repeat="model in models" draggable style="left: {{model.attributes.x}}px; top: {{model.attributes.y}}px"><img ng-src="../../../data/packages/{{getSpriteUrl(model);}}"></div>
+            <div class="game-element enabled ui-widget-content" ng-repeat="model in models" draggable style="left: {{model.attributes.x}}px; top: {{model.attributes.y}}px"><img ng-src="../../../data/packages/{{getImageUrl(model, 'sprites');}}"></div>
         </div>
         <div id="foregroundcontainer">
-
+            <div class="game-element enabled ui-widget-content" ng-repeat="fsprite in foregroundSprites" draggable style="left: {{fsprite.attributes.x}}px; top: {{fsprite.attributes.y}}px"><img ng-src="../../../data/packages/{{getImageUrl(fsprite, 'decorations');}}"></div>
         </div>
         <div id="controlscontainer">
-            <div class="game-element enabled ui-widget-content" ng-repeat="control in controlSprites" draggable style="left: {{control.attributes.x}}px; top: {{control.attributes.y}}px"><img ng-src="../../../data/packages/{{getControlUrl(control);}}"></div>
+            <div class="game-element enabled ui-widget-content" ng-repeat="control in controlSprites" draggable style="left: {{control.attributes.x}}px; top: {{control.attributes.y}}px"><img ng-src="../../../data/packages/{{getImageUrl(control, 'controls');}}"></div>
         </div>
     </div>
 </div>

@@ -12,6 +12,8 @@ Tentacle.mainApp.controller("spritespanelcontroller", function ($scope, shared) 
        $scope.getModels();
        
        $scope.controlSprites = Tentacle.modelManager.getModelByType("ControlSprite");
+       $scope.foregroundSprites = Tentacle.modelManager.getModelByType("ForegroundSprite");
+       $scope.backgroundSprites = Tentacle.modelManager.getModelByType("BackgroundSprite");
     };
 
     $scope.getModels = function () {
@@ -27,16 +29,18 @@ Tentacle.mainApp.controller("spritespanelcontroller", function ($scope, shared) 
     $scope.getName = shared.getName;
     
     $scope.getSpriteUrl = function (model) {
-        var spriteFile = Tentacle.modelManager.getModelByUid(model.get("reference"));
-        var spritePackage = Tentacle.modelManager.getModelByUid(spriteFile.get("package"));
-        return spritePackage.get("identifier") + "/sprites/" + spriteFile.get("file");
+        return getImageUrl(model, "sprites");
     };
     
     $scope.getControlUrl = function (model) {
+        return getImageUrl(model, "controls");
+    };
+    
+    $scope.getImageUrl = function (model, folder) {
         var spriteFile = Tentacle.modelManager.getModelByUid(model.get("reference"));
         var spritePackage = Tentacle.modelManager.getModelByUid(spriteFile.get("package"));
-        return spritePackage.get("identifier") + "/controls/" + spriteFile.get("file");
-    };
+        return spritePackage.get("identifier") + "/" + folder + "/" + spriteFile.get("file");
+    }
 
     $scope.deleteItem = function (descid, item, $event) {
         $event.stopPropagation();
